@@ -112,7 +112,11 @@ git clone https://github.com/TU-USUARIO/san-valentin.git .
 
 ### 5. Configurar Nginx para el sitio estático
 
-1. Crear un sitio de Nginx:
+Si **ya tienes otras apps** configuradas en Nginx (por ejemplo otro sitio en el puerto 80), conviene asignar a esta app **otro puerto** (por ejemplo **8080**) para no tocar la configuración existente. Si esta es la única app, puedes usar el puerto **80** como siempre.
+
+#### Opción A — Esta es la única app (puerto 80)
+
+1. Crear el sitio de Nginx:
 
 ```bash
 sudo nano /etc/nginx/sites-available/san-valentin
@@ -148,20 +152,65 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-### 6. Abrir el puerto 80 en Lightsail
+4. En Lightsail → pestaña **Networking** → **Firewall**: permitir **HTTP (80)**.
 
-1. En la instancia → pestaña **Networking**.
-2. En **Firewall** asegúrate de que esté permitido **HTTP (80)**. Si no, añade una regla: aplicación **HTTP**, puerto 80.
+5. Abrir en el navegador: `http://TU-IP-PUBLICA`
 
-### 7. Ver el sitio
+---
 
-En Lightsail, copia la **IP pública** de la instancia. En el navegador abre:
+#### Opción B — Ya hay otras apps en Nginx (usar otro puerto, ej. 8080)
+
+Así no se modifica el sitio que ya usa el puerto 80.
+
+1. Crear el sitio de Nginx:
+
+```bash
+sudo nano /etc/nginx/sites-available/san-valentin
+```
+
+2. Pegar esta configuración usando el puerto **8080** (puedes cambiar el número si quieres):
+
+```nginx
+server {
+    listen 8080;
+    listen [::]:8080;
+    root /var/www/san-valentin;
+    index index.html;
+    server_name _;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location ~* \.(css|js|ico|png|jpg|jpeg|gif|svg|woff|woff2)$ {
+        expires 7d;
+        add_header Cache-Control "public, immutable";
+    }
+}
+```
+
+3. Activar **solo** este sitio (no borres `default` ni otros sitios):
+
+```bash
+sudo ln -sf /etc/nginx/sites-available/san-valentin /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+4. En Lightsail → pestaña **Networking** → **Firewall**: añadir una regla para el puerto **8080** (Application: **Custom**, Protocol: **TCP**, Port: **8080**).
+
+5. Abrir en el navegador indicando el puerto:
 
 ```
-http://TU-IP-PUBLICA
+http://TU-IP-PUBLICA:8080
 ```
 
-Deberías ver la página de San Valentín. Si tienes dominio, más adelante puedes poner un **Load Balancer** o apuntar el DNS a esta IP y, si quieres, añadir HTTPS con Let's Encrypt (certbot).
+### 6. Ver el sitio
+
+- Si usaste **puerto 80**: `http://TU-IP-PUBLICA`
+- Si usaste **puerto 8080** (u otro): `http://TU-IP-PUBLICA:8080`
+
+Si tienes dominio, puedes apuntar un subdominio a esta IP y puerto o poner un proxy inverso en el sitio que ya use el 80.
 
 ## Editar textos y opciones
 

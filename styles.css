@@ -400,12 +400,12 @@ body {
   text-align: left;
 }
 
+/* Los saltos de línea del HTML no se muestran; para un salto visible usa <br> */
 .letter-content {
   font-family: var(--font-body);
   font-size: 1rem;
   line-height: 1.7;
   color: var(--color-text);
-  white-space: pre-wrap;
 }
 
 .letter-content p {
