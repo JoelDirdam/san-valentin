@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>San Valentín 💖</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app" class="app">
+    <!-- ========== INTRO ========== -->
+    <section id="screen-intro" class="screen screen--active">
+      <div class="screen__content screen__content--centered">
+        <p class="intro-text" data-editable="intro-message">Tengo una pregunta importante para ti Marcelita Serrano Gutiérrez💖</p>
+        <p>Pero deberás harcer unos mini puzzles jiji</p>
+        <button type="button" id="btn-start-mission" class="btn btn--primary">Comenzar puzzle</button>
+      </div>
+    </section>
+
+    <!-- ========== MISIÓN: OBJETIVO + PROGRESO ========== -->
+    <section id="screen-mission" class="screen">
+      <div class="screen__content screen__content--centered">
+        <p class="mission-objective" data-editable="mission-objective">Completa la misión para desbloquear la pregunta final</p>
+        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="2">
+          <div class="progress-bar__fill" id="progress-fill"></div>
+          <span class="progress-bar__label" id="progress-label">0 / 2</span>
+        </div>
+        <button type="button" id="btn-begin-challenges" class="btn btn--primary">Empezar</button>
+      </div>
+    </section>
+
+    <!-- ========== RETO 1: REACCIÓN ========== -->
+    <section id="screen-challenge-1" class="screen screen--challenge">
+      <div class="screen__content screen__content--challenge">
+        <p class="challenge-title" data-editable="challenge-1-title">Reto 1: Reacción</p>
+        <p class="challenge-instruction" data-editable="challenge-1-instruction">Toca los corazones antes de que desaparezcan</p>
+        <div class="progress-bar progress-bar--inline" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="3">
+          <div class="progress-bar__fill" id="progress-fill-1"></div>
+          <span class="progress-bar__label" id="progress-label-1">0 / 3</span>
+        </div>
+        <div class="challenge-1-area" id="challenge-1-area"></div>
+        <p class="feedback-message" id="feedback-1" aria-live="polite"></p>
+        <button type="button" id="btn-next-1" class="btn btn--primary btn--hidden">Siguiente</button>
+      </div>
+    </section>
+
+    <!-- ========== RETO 2: MEMORIA (4 niveles) ========== -->
+    <section id="screen-challenge-2" class="screen screen--challenge">
+      <div class="screen__content screen__content--challenge">
+        <p class="challenge-title" data-editable="challenge-2-title">Reto 2: Memoria</p>
+        <p class="challenge-instruction" id="challenge-2-instruction" data-editable="challenge-2-instruction">Memoriza dónde están los corazones</p>
+        <div class="progress-bar progress-bar--inline" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="4">
+          <div class="progress-bar__fill" id="progress-fill-2"></div>
+          <span class="progress-bar__label" id="progress-label-2">Nivel 1 / 4</span>
+        </div>
+        <div class="challenge-2-grid" id="challenge-2-grid"></div>
+        <p class="feedback-message" id="feedback-2" aria-live="polite"></p>
+        <button type="button" id="btn-next-2" class="btn btn--primary btn--hidden">Siguiente</button>
+      </div>
+    </section>
+
+    <!-- ========== VICTORIA ========== -->
+    <section id="screen-victory" class="screen">
+      <div class="screen__content screen__content--centered">
+        <p class="victory-title" data-editable="victory-message">Wuuu felicidades amorcito has desbloqueado la pregunta final... 💖</p>
+        <button type="button" id="btn-to-final" class="btn btn--primary">Continuar</button>
+      </div>
+    </section>
+
+    <!-- ========== PREGUNTA FINAL (Sí / No) ========== -->
+    <section id="screen-final" class="screen">
+      <div class="screen__content screen__content--centered">
+        <p class="final-question" data-editable="final-question">¿Quieres ser mi San Valentín, Marcelita?</p>
+        <div class="final-buttons">
+          <button type="button" id="btn-yes-final" class="btn btn--primary btn--yes-final">Sí</button>
+          <button type="button" id="btn-no-final" class="btn btn--no">No</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== AGRADECIMIENTO + BOTÓN ABRIR CARTA ========== -->
+    <section id="screen-thanks" class="screen">
+      <div class="screen__content screen__content--centered">
+        <p class="celebration-title" data-editable="celebration-title">¡Gracias por decir que sí mi niña bonita preciosa, Te amo Marcelita! 💕</p>
+        <p class="celebration-message" data-editable="celebration-message">Te dejo una cartita bonita para el amor de mi vida.</p>
+        <div id="confetti-container" class="confetti-container" aria-hidden="true"></div>
+        <div id="hearts-container" class="hearts-container" aria-hidden="true"></div>
+        <button type="button" id="btn-open-letter" class="btn btn--primary">Abrir carta</button>
+      </div>
+    </section>
+
+    <!-- ========== CARTA ABIERTA (hoja con tu mensaje) ========== -->
+    <section id="screen-letter" class="screen">
+      <div class="screen__content screen__content--letter">
+        <div class="letter-paper" id="letter-paper">
+          <div class="letter-content" data-editable="letter-content">
+            <p>Amooor, se que me debo esforzar mas, echarle mas ganas y asi, quiero demostrarte mi amor por ti y como dices quiero presumirte y que se note. Se que es facil decirlo, en fin, hare mi mayor
+              esfuerzo es lo que quiero decirte, ya que se que eres una novia increible, me gusta tu forma de ser, que seas inteligente, lo que siempre te digo que eres creativa, eres muy tierna, bonita y 
+              lo que mas me encanta es que te vez guapisima. Me gustas mucho y cada vez que veo a tus ojos me gustas mas, me vuelves a enamorar y cuando me sonries, tienes una sonrisa muy bonita. Gracias por
+              seguir conmigo, quiero hacer todos mis sueños contigo, que me acompañes a cada uno de ellos, quiero que tengamos hijos, por todas la veces que me dices "Yo le diria a ese niño o niña" y empiezas
+              a soltar una regañada bien respetuosa y pufff me encanta jajaja no manches que padre, solo pienso en lo padre que va a ser. Pero bueno mi Marcelita se que este año nos va a ir muy bien, este 2026 se vienen
+              cambios positivos de verdad. Gracias por estar aqui, por seguir conmigo y perdon por todas las ofenzas, por todo lo que te e echo Marcelita se que mereces mas. Te amo, te amo mucho.
+            </p>
+            <p>¡Feliz San Valentín! Atte Joel Madrid 💘</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

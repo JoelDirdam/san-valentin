@@ -1,0 +1,536 @@
+/* ============================================
+   San Valentín - Mini juego de misión
+   Romántico moderno, contraste claro, UX directa
+   ============================================ */
+
+:root {
+  /* Colores */
+  --color-bg: #fdf8f6;
+  --color-bg-card: #fff5f5;
+  --color-text: #3d3232;
+  --color-text-soft: #6b5c5c;
+  --color-accent: #c97b84;
+  --color-accent-strong: #b85c66;
+  --color-success: #7d9b76;
+  --color-success-bg: #e8f0e6;
+  --color-pink-light: #f8e8ec;
+  --color-pink-medium: #f0d4da;
+  --color-beige: #f5ebe0;
+  --color-white: #ffffff;
+  --color-shadow: rgba(201, 123, 132, 0.15);
+  --color-shadow-strong: rgba(184, 92, 102, 0.25);
+
+  /* Tipografía */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Source Sans 3', -apple-system, sans-serif;
+
+  /* Espaciado y bordes */
+  --radius: 16px;
+  --radius-btn: 12px;
+  --radius-card: 12px;
+  --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--color-text);
+  background: linear-gradient(160deg, var(--color-bg) 0%, var(--color-pink-light) 45%, var(--color-beige) 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+.app {
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ========== PANTALLAS ========== */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--transition), visibility var(--transition);
+}
+
+.screen--active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  position: relative;
+}
+
+.screen__content {
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+}
+
+.screen__content--centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+}
+
+.screen__content--challenge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* ========== INTRO ========== */
+.intro-text {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.35;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* ========== BARRA DE PROGRESO ========== */
+.progress-bar {
+  width: 100%;
+  max-width: 280px;
+  height: 10px;
+  background: var(--color-pink-light);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar--inline {
+  max-width: 100%;
+  height: 8px;
+}
+
+.progress-bar__fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-strong));
+  border-radius: 999px;
+  transition: width var(--transition);
+}
+
+.progress-bar__label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-soft);
+  margin-top: 0.35rem;
+}
+
+/* ========== MISIÓN ========== */
+.mission-objective {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 4vw, 1.75rem);
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.4;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* ========== RETOS ========== */
+.screen--challenge .screen__content {
+  max-width: 440px;
+}
+
+.challenge-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 4vw, 1.65rem);
+  font-weight: 600;
+  color: var(--color-accent-strong);
+  margin-bottom: 0.25rem;
+}
+
+.challenge-instruction {
+  font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+  color: var(--color-text-soft);
+  margin-bottom: 0.5rem;
+}
+
+/* Reto 1: área de corazones */
+.challenge-1-area {
+  position: relative;
+  width: 100%;
+  min-height: 200px;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-pink-medium);
+  overflow: hidden;
+}
+
+.challenge-1-heart {
+  position: absolute;
+  font-size: 2rem;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s ease-out, opacity 0.2s ease-out;
+}
+
+.challenge-1-heart:hover {
+  transform: scale(1.15);
+}
+
+.challenge-1-heart.challenge-1-heart--clicked {
+  opacity: 0;
+  transform: scale(1.4);
+  pointer-events: none;
+}
+
+.challenge-1-heart.challenge-1-heart--missed {
+  opacity: 0.3;
+  transform: scale(0.9);
+  pointer-events: none;
+}
+
+/* Reto 2: grid memoria (3×3, 4×4, 5×5) */
+.challenge-2-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+  width: 100%;
+  max-width: 280px;
+}
+
+.challenge-2-grid[data-cols="4"] {
+  grid-template-columns: repeat(4, 1fr);
+  max-width: 320px;
+  gap: 0.5rem;
+}
+
+.challenge-2-grid[data-cols="5"] {
+  grid-template-columns: repeat(5, 1fr);
+  max-width: 320px;
+  gap: 0.4rem;
+}
+
+.challenge-2-grid[data-cols="4"] .challenge-2-cell,
+.challenge-2-grid[data-cols="5"] .challenge-2-cell {
+  font-size: 1.35rem;
+}
+
+.challenge-2-cell {
+  aspect-ratio: 1;
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-pink-medium);
+  border-radius: var(--radius-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition), transform var(--transition);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.challenge-2-cell:hover:not(.challenge-2-cell--revealed):not(.challenge-2-cell--wrong) {
+  background: var(--color-pink-light);
+  border-color: var(--color-accent);
+  transform: scale(1.02);
+}
+
+.challenge-2-cell--revealed {
+  background: var(--color-success-bg);
+  border-color: var(--color-success);
+  cursor: default;
+}
+
+.challenge-2-cell--wrong {
+  background: var(--color-pink-light);
+  border-color: var(--color-text-soft);
+  cursor: default;
+  animation: shake 0.4s ease-out;
+}
+
+.challenge-2-cell--show {
+  background: var(--color-pink-light);
+  border-color: var(--color-accent);
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+/* Botón No (pregunta final) */
+.btn--no {
+  background: var(--color-pink-light);
+  color: var(--color-text-soft);
+  border: 2px solid var(--color-pink-medium);
+}
+
+.btn--no:hover {
+  background: var(--color-pink-medium);
+  color: var(--color-text);
+}
+
+.btn--yes-final {
+  transition: transform var(--transition);
+}
+
+/* Mensajes de feedback */
+.feedback-message {
+  min-height: 1.5em;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text-soft);
+  transition: opacity var(--transition);
+}
+
+.feedback-message.feedback--success {
+  color: var(--color-success);
+}
+
+.feedback-message.feedback--error {
+  color: var(--color-accent-strong);
+}
+
+/* Botones */
+.btn {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.85rem 2rem;
+  border: none;
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-strong) 100%);
+  color: var(--color-white);
+  box-shadow: 0 4px 14px var(--color-shadow);
+}
+
+.btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--color-shadow-strong);
+}
+
+.btn--primary:active {
+  transform: translateY(0);
+}
+
+.btn--hidden {
+  display: none;
+}
+
+.btn--visible {
+  display: inline-flex;
+}
+
+/* ========== VICTORIA ========== */
+.victory-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.65rem, 5vw, 2.1rem);
+  font-weight: 600;
+  color: var(--color-accent-strong);
+  line-height: 1.35;
+  animation: fadeInScale 0.6s ease-out;
+}
+
+/* ========== PREGUNTA FINAL ========== */
+.final-question {
+  font-family: var(--font-display);
+  font-size: clamp(1.65rem, 5vw, 2.1rem);
+  font-weight: 600;
+  color: var(--color-text);
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.final-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 260px;
+}
+
+.final-buttons .btn {
+  width: 100%;
+}
+
+/* ========== AGRADECIMIENTO + CARTA ========== */
+.screen__content--letter {
+  max-width: 520px;
+  width: 100%;
+  padding: 1rem;
+}
+
+.letter-paper {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-pink-medium);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 20px var(--color-shadow);
+  padding: 2rem 1.75rem;
+  text-align: left;
+}
+
+.letter-content {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--color-text);
+  white-space: pre-wrap;
+}
+
+.letter-content p {
+  margin-bottom: 1rem;
+}
+
+.letter-content p:last-child {
+  margin-bottom: 0;
+}
+
+.letter-content code {
+  font-size: 0.85em;
+  background: var(--color-pink-light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+}
+
+/* ========== CELEBRACIÓN ========== */
+.celebration-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
+  font-weight: 600;
+  color: var(--color-accent-strong);
+  animation: fadeInScale 0.6s ease-out;
+}
+
+.celebration-message {
+  font-size: clamp(1rem, 2.5vw, 1.15rem);
+  color: var(--color-text-soft);
+  max-width: 320px;
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+#screen-thanks .btn {
+  margin-top: 0.5rem;
+}
+
+.confetti-container,
+.hearts-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.heart-float {
+  position: absolute;
+  bottom: -2rem;
+  font-size: clamp(1.25rem, 4vw, 1.75rem);
+  opacity: 0.8;
+  animation: floatHeart 4s ease-out forwards;
+  pointer-events: none;
+}
+
+/* ========== ANIMACIONES ========== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes floatHeart {
+  0% {
+    transform: translateY(0) scale(0.5);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-100vh) scale(1) rotate(15deg);
+    opacity: 0.4;
+  }
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 480px) {
+  .screen {
+    padding: 1rem;
+  }
+
+  .challenge-1-area {
+    min-height: 180px;
+  }
+
+  .challenge-2-grid {
+    max-width: 240px;
+  }
+
+  .btn {
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
